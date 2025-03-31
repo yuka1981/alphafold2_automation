@@ -24,7 +24,6 @@ def af_info(log_path: Path) -> None:
     Parameters:
         log_path (Path): Path to the log file where information will be written.
     """
-    from .main import log_message
 
     try:
         result = subprocess.run(
