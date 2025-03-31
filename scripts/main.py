@@ -41,7 +41,8 @@ def af_info(log_path: Path) -> None:
             if len(parts) >= 2:
                 jax_versions.append(f"{parts[0]} {parts[1]}")
 
-        jax_summary = ", ".join(jax_versions)
+        jax_summary = ", ".join(jax_versions) if jax_versions else "N/A"
+
     except FileNotFoundError:
         log_message("Error: pip is not available in this environment.", log_path)
         return
