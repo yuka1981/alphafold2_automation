@@ -21,23 +21,23 @@ def test_af_info_logs_error_when_pip_fails(tmp_path):
         assert "Error: Unable to run pip list." in content
 
 
-# def test_af_info_logs_jax_version(tmp_path):
-#     log_file = tmp_path / "afinfo.log"
-#     fake_pip_output = (
-#         "Package    Version\n"
-#         "---------- -----------\n"
-#         "jax        0.4.21\n"
-#         "jaxlib     0.4.21\n"
-#         "numpy      1.23.5\n"
-#     )
+def test_af_info_logs_jax_version(tmp_path):
+    log_file = tmp_path / "afinfo.log"
+    fake_pip_output = (
+        "Package    Version\n"
+        "---------- -----------\n"
+        "jax        0.4.21\n"
+        "jaxlib     0.4.21\n"
+        "numpy      1.23.5\n"
+    )
 
-#     make_result = Mock()
-#     make_result.stdout = fake_pip_output
+    make_result = Mock()
+    make_result.stdout = fake_pip_output
 
-#     # Act
-#     with patch("subprocess.run", return_value=make_result):
-#         af_info(log_file)
+    # Act
+    with patch("subprocess.run", return_value=make_result):
+        af_info(log_file)
 
-#     # Assert
-#     content = log_file.read_text()
-#     assert "JAX versions: jax 0.4.21, jaxlib 0.4.21" in content
+    # Assert
+    content = log_file.read_text()
+    assert "JAX versions: jax 0.4.21, jaxlib 0.4.21" in content
