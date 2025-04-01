@@ -60,3 +60,95 @@ def af_info(log_path: Path) -> None:
     log_message(f"Log file path: {log_path}", log_path)
     log_message("AlphaFold environment information collected successfully.", log_path)
     log_message("==== End of Environment Information ====", log_path)
+
+
+def has_nvidia_gpu() -> bool:
+    """
+    Check if the system has an NVIDIA GPU.
+
+    Returns:
+        bool: True if an NVIDIA GPU is detected, False otherwise.
+    """
+    try:
+        output = subprocess.check_output(
+            ["nvidia-smi", "--query-gpu=name", "--format=csv,noheader"],
+            stderr=subprocess.DEVNULL,
+            text=True
+        )
+        # return format: "NVIDIA GH200 480GB"
+        return bool(output.strip())
+
+    except (Exception, FileNotFoundError,subprocess.CalledProcessError):
+        return False
+
+
+def has_amd_gpu() -> bool:
+    """
+    Check if the system has an AMD GPU.
+
+    Returns:
+        bool: True if an AMD GPU is detected, False otherwise.
+    """
+    try:
+        output = subprocess.check_output(
+            ["rocminfo"],
+            stderr=subprocess.DEVNULL,
+            text=True
+        )
+        # return format: "Name: gfx90a ..." (multiple lines)
+        return any("gfx" in line.lower() for line in output.splitlines())
+
+    except (Exception, FileNotFoundError, subprocess.CalledProcessError):
+        return False
+
+
+def detect_platform() -> str:
+    """
+    Detect the platform (AMD or NVIDIA) based on the available GPUs.
+
+    Returns:
+        str: The detected platform. Can be "amd", "nvidia", or "cpu".
+    """
+    if has_nvidia_gpu():
+        return "nvidia"
+    elif has_amd_gpu():
+        return "amd"
+    else:
+        raise RuntimeError("No supported GPU platform found.")
+
+
+def setup_platform(mode: str) -> None:
+    """
+    Setup platform-specific environment variables for AlphaFold based on mode.
+
+    Parameters:
+        mode (str): Either "cpu" or "gpu". In "gpu" mode, the system auto-detects NVIDIA or AMD GPU.
+
+    Raises:
+        ValueError: If mode is unsupported.
+        RuntimeError: If GPU mode is selected but no platform is detected.
+    """
+    os.environ["TF_DETERMINISTIC_OPS"] = "1"
+
+    if mode == "cpu":
+        os.environ["JAX_PLATFORMS"] = "cpu"
+        # Try disabling both GPU type, just in case
+        os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+        os.environ["HIP_VISIBLE_DEVICES"] = "-1"
+
+    elif mode == "gpu":
+        platform = detect_platform()
+        os.environ["XLA_PYTHON_CLIENT_MEM_FRACTION"] = "0.9"
+        
+        if platform == "nvidia":
+            os.environ["JAX_PLATFORMS"] = "cuda"
+            os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+
+        elif platform == "amd":
+            os.environ["JAX_PLATFORMS"] = "rocm"
+            os.environ["HIP_VISIBLE_DEVICES"] = "0"
+            os.environ["ROCM_PATH"] = "/opt/rocm"
+    
+    else:
+        raise ValueError(f"Unsupported mode: {mode}")
+

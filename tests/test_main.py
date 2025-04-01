@@ -1,7 +1,10 @@
 import os
+import pytest
+import pdb
 from unittest import mock
+from unittest.mock import patch
 from pathlib import Path
-from scripts.main import log_message, af_info
+from scripts.main import log_message, af_info, setup_platform
 
 def test_log_message(tmp_path):
     # Arrange
@@ -34,3 +37,25 @@ def test_af_info(mock_run, tmp_path):
     content = log_file.read_text()
     assert "jax 0.4.21" in content
     assert "jaxlib 0.4.21" in content
+
+
+@pytest.mark.parametrize(
+    "gpu_type, expected_env", [
+        ("nvidia", {"JAX_PLATFORMS": "cuda", "CUDA_VISIBLE_DEVICES": "0"}),
+        ("amd", {"JAX_PLATFORMS": "rocm", "HIP_VISIBLE_DEVICES": "0"}),
+    ]
+)
+def test_setup_platform_gpu_auto_detect(gpu_type, expected_env):
+    # Clean up before test
+    for value in ["JAX_PLATFORMS", "CUDA_VISIBLE_DEVICES", "HIP_VISIBLE_DEVICES", "ROCM_PATH"]:
+        os.environ.pop(value, None)
+
+    with patch("scripts.main.has_nvidia_gpu", return_value=(gpu_type == "nvidia")), \
+        patch("scripts.main.has_amd_gpu", return_value=(gpu_type == "amd")):
+        setup_platform("gpu")
+    
+    # Assert
+    for key, value in expected_env.items():
+        assert os.environ[key] == value
+
+    assert os.environ["TF_DETERMINISTIC_OPS"] == "1"
