@@ -4,7 +4,9 @@ import pdb
 from unittest import mock
 from unittest.mock import patch
 from pathlib import Path
-from scripts.main import log_message, af_info, setup_platform, check_required_file
+from scripts.log_utils import log_message, check_required_file
+from scripts.env_utils import af_info, setup_platform
+
 
 def test_log_message(tmp_path):
     # Arrange
@@ -19,7 +21,7 @@ def test_log_message(tmp_path):
     assert message in content
 
 
-@mock.patch("scripts.main.subprocess.run")
+@mock.patch("scripts.env_utils.subprocess.run")
 def test_af_info(mock_run, tmp_path):
     # Arrange
     log_file = tmp_path / "env.log"

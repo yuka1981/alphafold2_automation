@@ -3,6 +3,7 @@ import pytest
 from unittest.mock import patch
 from scripts.gpu_detect import has_nvidia_gpu, has_amd_gpu, detect_platform
 
+
 # === NVIDIA GPU test cases ===
 @patch("subprocess.check_output")
 def test_has_nvidia_gpu_return_true(mock_check_output):
