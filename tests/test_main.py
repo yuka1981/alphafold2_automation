@@ -47,7 +47,7 @@ def test_af_info(mock_run, tmp_path):
 )
 def test_setup_platform_gpu_auto_detect(gpu_type, expected_env):
     # Clean up before test
-    for value in ["JAX_PLATFORMS", "CUDA_VISIBLE_DEVICES", "HIP_VISIBLE_DEVICES", "ROCM_VISIBLE_DEVICES"]:
+    for value in ["JAX_PLATFORMS", "CUDA_VISIBLE_DEVICES", "HIP_VISIBLE_DEVICES", "ROCM_PATH"]:
         os.environ.pop(value, None)
 
     with patch("scripts.main.has_nvidia_gpu", return_value=(gpu_type == "nvidia")), \
