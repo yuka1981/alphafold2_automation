@@ -1,7 +1,8 @@
 import subprocess
 import pytest
 from unittest.mock import patch
-from scripts.main import has_nvidia_gpu, has_amd_gpu, detect_platform
+from scripts.gpu_detect import has_nvidia_gpu, has_amd_gpu, detect_platform
+
 
 # === NVIDIA GPU test cases ===
 @patch("subprocess.check_output")
@@ -23,9 +24,11 @@ def test_has_nvidia_gpu_return_false_when_file_not_found(mock_check_output):
 
 
 @patch("subprocess.check_output")
-def test_has_nvidia_gpu_general_error(mock_check_output):
-    mock_check_output.side_effect = Exception("General error")
-    assert has_nvidia_gpu() is False
+def test_has_nvidia_gpu_unexpected_error(mock_check_output):
+    mock_check_output.side_effect = Exception("Unexpected error")
+
+    with pytest.raises(Exception, match="Unexpected error"):
+        has_nvidia_gpu()
 
 
 @patch("subprocess.check_output")
@@ -54,9 +57,10 @@ def test_has_amd_gpu_return_false_when_file_not_found(mock_check_output):
 
 
 @patch("subprocess.check_output")
-def test_has_amd_gpu_general_error(mock_check_output):
-    mock_check_output.side_effect = Exception("General error")
-    assert has_amd_gpu() is False
+def test_has_amd_gpu_unexpected_error(mock_check_output):
+    mock_check_output.side_effect = Exception("Unexpected error")
+    with pytest.raises(Exception, match="Unexpected error"):
+        has_amd_gpu()
 
 
 @patch("subprocess.check_output")
@@ -66,21 +70,19 @@ def test_has_amd_gpu_called_process_error(mock_check_output):
 
 
 # === Platform detection test cases (only check GPU environment) ===
-@patch("scripts.main.has_nvidia_gpu")
+@patch("scripts.gpu_detect.has_nvidia_gpu")
 def test_detect_platform_nvidia(mock_has_nvidia_gpu):
     mock_has_nvidia_gpu.return_value = True
     assert detect_platform() == "nvidia"
 
 
-@patch("scripts.main.has_amd_gpu")
+@patch("scripts.gpu_detect.has_amd_gpu")
 def test_detect_platform_amd(mock_has_amd_gpu):
     mock_has_amd_gpu.return_value = True
     assert detect_platform() == "amd"
 
 
-@patch("scripts.main.has_nvidia_gpu", return_value=False)
-@patch("scripts.main.has_amd_gpu", return_value=False)
+@patch("scripts.gpu_detect.has_nvidia_gpu", return_value=False)
+@patch("scripts.gpu_detect.has_amd_gpu", return_value=False)
 def test_detect_platform_no_gpu(mock_has_nvidia_gpu, mock_has_amd_gpu):
-    with pytest.raises(RuntimeError) as excinfo:
-        detect_platform()
-        assert str(excinfo.value) == "No supported GPU platform found."
+    assert detect_platform() == "cpu"

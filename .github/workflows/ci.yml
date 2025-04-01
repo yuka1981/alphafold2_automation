@@ -28,6 +28,12 @@ jobs:
         uv venv
         uv pip install .[dev]
 
+    - name: Ensure pip module is available
+      run: uv pip install pip
+  
+    - name: Type check
+      run: .venv/bin/mypy scripts
+
     - name: Run tests
       run: |
         .venv/bin/pytest
