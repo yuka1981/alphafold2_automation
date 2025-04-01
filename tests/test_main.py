@@ -71,7 +71,7 @@ def test_check_required_file_exists(tmp_path, capsys):
 
     # Assert
     captured = capsys.readouterr()
-    assert "Fasta file exists." in captured.out
+    assert f"Fasta file {file} exists." in captured.out
 
 
 def test_check_required_file_not_exists(tmp_path, capsys):
