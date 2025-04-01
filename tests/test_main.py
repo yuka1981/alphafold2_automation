@@ -50,8 +50,8 @@ def test_setup_platform_gpu_auto_detect(gpu_type, expected_env):
     for value in ["JAX_PLATFORMS", "CUDA_VISIBLE_DEVICES", "HIP_VISIBLE_DEVICES", "ROCM_PATH"]:
         os.environ.pop(value, None)
 
-    with patch("scripts.main.has_nvidia_gpu", return_value=(gpu_type == "nvidia")), \
-        patch("scripts.main.has_amd_gpu", return_value=(gpu_type == "amd")):
+    with patch("scripts.gpu_detect.has_nvidia_gpu", return_value=(gpu_type == "nvidia")), \
+        patch("scripts.gpu_detect.has_amd_gpu", return_value=(gpu_type == "amd")):
         setup_platform("gpu")
     
     # Assert

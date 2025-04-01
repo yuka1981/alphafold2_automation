@@ -1,7 +1,7 @@
 import subprocess
 import pytest
 from unittest.mock import patch
-from scripts.main import has_nvidia_gpu, has_amd_gpu, detect_platform
+from scripts.gpu_detect import has_nvidia_gpu, has_amd_gpu, detect_platform
 
 # === NVIDIA GPU test cases ===
 @patch("subprocess.check_output")
@@ -66,20 +66,20 @@ def test_has_amd_gpu_called_process_error(mock_check_output):
 
 
 # === Platform detection test cases (only check GPU environment) ===
-@patch("scripts.main.has_nvidia_gpu")
+@patch("scripts.gpu_detect.has_nvidia_gpu")
 def test_detect_platform_nvidia(mock_has_nvidia_gpu):
     mock_has_nvidia_gpu.return_value = True
     assert detect_platform() == "nvidia"
 
 
-@patch("scripts.main.has_amd_gpu")
+@patch("scripts.gpu_detect.has_amd_gpu")
 def test_detect_platform_amd(mock_has_amd_gpu):
     mock_has_amd_gpu.return_value = True
     assert detect_platform() == "amd"
 
 
-@patch("scripts.main.has_nvidia_gpu", return_value=False)
-@patch("scripts.main.has_amd_gpu", return_value=False)
+@patch("scripts.gpu_detect.has_nvidia_gpu", return_value=False)
+@patch("scripts.gpu_detect.has_amd_gpu", return_value=False)
 def test_detect_platform_no_gpu(mock_has_nvidia_gpu, mock_has_amd_gpu):
     with pytest.raises(RuntimeError) as excinfo:
         detect_platform()
