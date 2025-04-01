@@ -24,7 +24,7 @@ def test_cli_main_success(tmp_path, monkeypatch, capsys):
     main()
 
     # Assert
-    output =  capsys.readouterr().out
+    output = capsys.readouterr().out
     print(output)
     assert "AlphaFold 2 Runner" in output
     assert "Setup complete" in output

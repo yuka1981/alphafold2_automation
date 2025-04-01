@@ -32,8 +32,8 @@ def af_info(log_path: Path) -> None:
 
         jax_summary = ", ".join(jax_versions) if jax_versions else "N/A"
 
-    except FileNotFoundError:
-        log_message("Error: pip is not available in this environment.", log_path)
+    except (FileNotFoundError, subprocess.CalledProcessError) as e:
+        log_message(f"Error: Unable to run pip list. {e}", log_path)
         return
 
     tf_deterministic_ops = os.environ.get("TF_DETERMINISTIC_OPS", "N/A")
