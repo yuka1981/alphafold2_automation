@@ -18,7 +18,7 @@ def has_nvidia_gpu() -> bool:
         # return format: "NVIDIA GH200 480GB"
         return bool(output.strip())
 
-    except (Exception, FileNotFoundError,subprocess.CalledProcessError):
+    except (FileNotFoundError,subprocess.CalledProcessError):
         return False
 
 
@@ -38,7 +38,7 @@ def has_amd_gpu() -> bool:
         # return format: "Name: gfx90a ..." (multiple lines)
         return any("gfx" in line.lower() for line in output.splitlines())
 
-    except (Exception, FileNotFoundError, subprocess.CalledProcessError):
+    except (FileNotFoundError, subprocess.CalledProcessError):
         return False
 
 

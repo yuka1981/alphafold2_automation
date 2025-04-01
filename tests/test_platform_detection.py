@@ -24,9 +24,11 @@ def test_has_nvidia_gpu_return_false_when_file_not_found(mock_check_output):
 
 
 @patch("subprocess.check_output")
-def test_has_nvidia_gpu_general_error(mock_check_output):
-    mock_check_output.side_effect = Exception("General error")
-    assert has_nvidia_gpu() is False
+def test_has_nvidia_gpu_unexpected_error(mock_check_output):
+    mock_check_output.side_effect = Exception("Unexpected error")
+
+    with pytest.raises(Exception, match="Unexpected error"):
+        has_nvidia_gpu()
 
 
 @patch("subprocess.check_output")
@@ -55,9 +57,10 @@ def test_has_amd_gpu_return_false_when_file_not_found(mock_check_output):
 
 
 @patch("subprocess.check_output")
-def test_has_amd_gpu_general_error(mock_check_output):
-    mock_check_output.side_effect = Exception("General error")
-    assert has_amd_gpu() is False
+def test_has_amd_gpu_unexpected_error(mock_check_output):
+    mock_check_output.side_effect = Exception("Unexpected error")
+    with pytest.raises(Exception, match="Unexpected error"):
+        has_amd_gpu()
 
 
 @patch("subprocess.check_output")
