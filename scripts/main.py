@@ -1,17 +1,18 @@
 import argparse
 import sys
 from pathlib import Path
+from typing import NoReturn
 from scripts.env_utils import af_info, setup_platform
 from scripts.log_utils import check_required_file, log_message
 
 
 class CustomArgParser(argparse.ArgumentParser):
-    def error(self, message):
+    def error(self, message: str) -> NoReturn:
         self.print_help(sys.stderr)
         self.exit(2, f"Error: {message}\n")
 
 
-def main():
+def main() -> None:
     parser = CustomArgParser(
         description="Run AlphaFold workflow",
         formatter_class=argparse.RawTextHelpFormatter
