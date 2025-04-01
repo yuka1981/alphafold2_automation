@@ -98,7 +98,7 @@ def has_amd_gpu() -> bool:
         # return format: "Name: gfx90a ..." (multiple lines)
         return any("gfx" in line.lower() for line in output.splitlines())
 
-    except (FileNotFoundError, subprocess.CalledProcessError):
+    except (Exception, FileNotFoundError, subprocess.CalledProcessError):
         return False
 
 
@@ -114,7 +114,7 @@ def detect_platform() -> str:
     elif has_amd_gpu():
         return "amd"
     else:
-        return RuntimeError("No supported GPU platform found.")
+        raise RuntimeError("No supported GPU platform found.")
 
 
 def setup_platform(mode: str) -> None:
