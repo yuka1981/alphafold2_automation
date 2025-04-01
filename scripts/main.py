@@ -137,14 +137,14 @@ def setup_platform(mode: str) -> None:
         os.environ["HIP_VISIBLE_DEVICES"] = "-1"
 
     elif mode == "gpu":
-        platfrom = detect_platform()
+        platform = detect_platform()
         os.environ["XLA_PYTHON_CLIENT_MEM_FRACTION"] = "0.9"
         
-        if platfrom == "nvidia":
+        if platform == "nvidia":
             os.environ["JAX_PLATFORMS"] = "cuda"
             os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
-        elif platfrom == "amd":
+        elif platform == "amd":
             os.environ["JAX_PLATFORMS"] = "rocm"
             os.environ["HIP_VISIBLE_DEVICES"] = "0"
             os.environ["ROCM_PATH"] = "/opt/rocm"
