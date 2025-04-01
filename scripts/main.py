@@ -165,4 +165,4 @@ def check_required_file(file_path: Path) -> None:
     if not file_path.exists():
         raise FileNotFoundError(f"Missing required file: {file_path}")
 
-    print(f"Fasta file exists.")
+    print(f"Fasta file {file_path} exists.")
