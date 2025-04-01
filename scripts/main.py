@@ -3,7 +3,7 @@ import sys
 from pathlib import Path
 from typing import NoReturn
 from scripts.env_utils import af_info, setup_platform
-from scripts.log_utils import check_required_file, log_message
+from scripts.log_utils import check_required_file
 
 
 class CustomArgParser(argparse.ArgumentParser):

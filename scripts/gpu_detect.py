@@ -54,4 +54,5 @@ def detect_platform() -> str:
     elif has_amd_gpu():
         return "amd"
     else:
-        raise RuntimeError("No supported GPU platform found.")
+        print("Warning: No supported GPU platform found. Falling back to CPU mode.")
+        return "cpu"

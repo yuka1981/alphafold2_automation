@@ -85,6 +85,4 @@ def test_detect_platform_amd(mock_has_amd_gpu):
 @patch("scripts.gpu_detect.has_nvidia_gpu", return_value=False)
 @patch("scripts.gpu_detect.has_amd_gpu", return_value=False)
 def test_detect_platform_no_gpu(mock_has_nvidia_gpu, mock_has_amd_gpu):
-    with pytest.raises(RuntimeError) as excinfo:
-        detect_platform()
-        assert str(excinfo.value) == "No supported GPU platform found."
+    assert detect_platform() == "cpu"

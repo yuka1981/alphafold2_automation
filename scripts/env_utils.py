@@ -59,19 +59,12 @@ def setup_platform(mode: str) -> None:
         mode (str): Either "cpu" or "gpu". In "gpu" mode, the system auto-detects NVIDIA or AMD GPU.
 
     Raises:
-        ValueError: If mode is unsupported.
-        RuntimeError: If GPU mode is selected but no platform is detected.
+        ValueError: If mode is unsupported, fallback to cpu mode.
     """
     os.environ["TF_DETERMINISTIC_OPS"] = "1"
+    platform = detect_platform()
 
-    if mode == "cpu":
-        os.environ["JAX_PLATFORMS"] = "cpu"
-        # Try disabling both GPU type, just in case
-        os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
-        os.environ["HIP_VISIBLE_DEVICES"] = "-1"
-
-    elif mode == "gpu":
-        platform = detect_platform()
+    if mode == "gpu" and platform != "cpu":
         os.environ["XLA_PYTHON_CLIENT_MEM_FRACTION"] = "0.9"
         
         if platform == "nvidia":
@@ -82,6 +75,12 @@ def setup_platform(mode: str) -> None:
             os.environ["JAX_PLATFORMS"] = "rocm"
             os.environ["HIP_VISIBLE_DEVICES"] = "0"
             os.environ["ROCM_PATH"] = "/opt/rocm"
+
+    elif mode == "cpu":
+        os.environ["JAX_PLATFORMS"] = "cpu"
+        # Try disabling both GPU type, just in case
+        os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+        os.environ["HIP_VISIBLE_DEVICES"] = "-1"
     
     else:
         raise ValueError(f"Unsupported mode: {mode}")
