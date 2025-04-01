@@ -152,3 +152,17 @@ def setup_platform(mode: str) -> None:
     else:
         raise ValueError(f"Unsupported mode: {mode}")
 
+def check_required_file(file_path: Path) -> None:
+    """
+    Check whether the given file exists. If not, raise an error.
+
+    Parameters:
+        file_path (Path): The path to the file that should exist.
+
+    Raises:
+        FileNotFoundError: If the file does not exist.
+    """
+    if not file_path.exists():
+        raise FileNotFoundError(f"Missing required file: {file_path}")
+
+    print(f"Fasta file {file_path} exists.")

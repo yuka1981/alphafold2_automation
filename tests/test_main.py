@@ -4,7 +4,7 @@ import pdb
 from unittest import mock
 from unittest.mock import patch
 from pathlib import Path
-from scripts.main import log_message, af_info, setup_platform
+from scripts.main import log_message, af_info, setup_platform, check_required_file
 
 def test_log_message(tmp_path):
     # Arrange
@@ -59,3 +59,26 @@ def test_setup_platform_gpu_auto_detect(gpu_type, expected_env):
         assert os.environ[key] == value
 
     assert os.environ["TF_DETERMINISTIC_OPS"] == "1"
+
+
+def test_check_required_file_exists(tmp_path, capsys):
+    # Arrange
+    file = tmp_path / "input.fasta"
+    file.write_text("SEQUENCE")
+
+    # Act
+    check_required_file(file)
+
+    # Assert
+    captured = capsys.readouterr()
+    assert f"Fasta file {file} exists." in captured.out
+
+
+def test_check_required_file_not_exists(tmp_path, capsys):
+    # Arrange
+    # Create a temporary file path object without creating the file
+    file = tmp_path / "input.fasta"
+
+    # Act & Assert
+    with pytest.raises(FileNotFoundError, match="Missing required file:"):
+        check_required_file(file)
