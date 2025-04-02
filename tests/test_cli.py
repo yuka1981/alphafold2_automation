@@ -163,3 +163,43 @@ def test_cli_external_missing_af2_script(mock_subprocess_run, tmp_path, monkeypa
     # Act & Assert:
     with pytest.raises(ValueError, match="requires --af2-python and --af2-script"):
         main()
+
+
+def test_cli_mock_without_log(tmp_path, monkeypatch, capsys):
+    fasta_file = tmp_path / "input.fasta"
+    fasta_file.write_text(">Test sequence\nSEQUENCE")
+
+    monkeypatch.setattr("sys.argv", [
+        "alphafold-runner", 
+        "--input", str(fasta_file), 
+        "--backend", "mock",
+    ])
+
+    # Act
+    main()
+    output = capsys.readouterr()
+
+    # Assert
+    assert "Simulating AlphaFold inference" in output.out
+    assert "Mock inference complete" in output.out
+
+
+def test_cli_log_path_unwritable(tmp_path, monkeypatch):
+    fasta_file = tmp_path / "input.fasta"
+    fasta_file.write_text(">seq1\nACDEFG")
+
+    # simulate a log file that is unwritable
+    unwritable_log = tmp_path / "log_dir"
+    unwritable_log.mkdir()  # set unwritable log path as a directory
+
+    monkeypatch.setattr("sys.argv", [
+        "alphafold-runner",
+        "--input", str(fasta_file),
+        "--backend", "mock",
+        "--log", str(unwritable_log)   
+    ])
+
+    # Act & Assert 
+    with pytest.raises(IsADirectoryError):  
+        main()
+
