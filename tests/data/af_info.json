@@ -1,0 +1,8 @@
+{
+    "cuda_version": "12.4",
+    "driver_version": "545.23.08",
+    "python_version": "3.12.2",
+    "tensorflow_version": "2.17.1",
+    "jax_version": "0.4.29",
+    "jaxlib_version": "0.4.29+cuda12.cudnn91"
+}
