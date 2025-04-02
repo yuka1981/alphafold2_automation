@@ -44,6 +44,13 @@ def run_alphafold_external(
         af2_script (Path): Path to run_alphafold.py or main.py
         log_path (Path): Log file path
     """
+    if not af2_python.exists():
+        raise FileNotFoundError(f"AlphaFold2 Python interpreter not found: {af2_python}")
+
+    if not af2_script.exists():
+        raise FileNotFoundError(f"AlphaFold2 script not found: {af2_script}")
+
+    log_message(f"🧪 Calling AlphaFold2 external process...", log_path)
     log_message(f"🧪 Calling AlphaFold2 external process...", log_path)
 
     try:
