@@ -41,3 +41,17 @@ def test_prepare_output_dir_raises_if_parent_is_file(tmp_path):
 
     content = log_file.read_text()
     assert "Error creating output directory" in content
+
+
+def test_prepare_output_dir_logs_reuse_error_when_log_invalid(tmp_path, capsys):
+    output_dir = tmp_path / "output"
+    output_dir.mkdir()
+
+    log_path = tmp_path / "badlog"
+    log_path.mkdir()
+
+    with pytest.raises(OSError):
+        prepare_output_dir(output_dir, log_path)
+        output = capsys.readouterr()
+        assert "Error reusing output directory" in output.out
+

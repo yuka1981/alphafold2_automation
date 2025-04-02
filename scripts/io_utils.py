@@ -21,4 +21,9 @@ def prepare_output_dir(output_dir: Path, log_path: Path | None = None) -> None:
             log_message(f"Error creating output directory {output_dir}: {e}", log_path)
             raise
     else:
-        log_message(f"Reusing existing output directory: {output_dir}", log_path)
+        # Handle write permissions error
+        try:
+            log_message(f"Reusing existing output directory: {output_dir}", log_path)
+        except OSError as e:
+            log_message(f"Error reusing output directory {output_dir}: {e}", log_path)
+            raise
