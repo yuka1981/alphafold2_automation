@@ -14,7 +14,11 @@ def prepare_output_dir(output_dir: Path, log_path: Path | None = None) -> None:
         log_path (Path | None): Optional path to a log file.
     """
     if not output_dir.exists():
-        output_dir.mkdir(parents=True, exist_ok=True)    
-        log_message(f"Created output directory: {output_dir}", log_path)
+        try:
+            output_dir.mkdir(parents=True, exist_ok=True)
+            log_message(f"Created output directory: {output_dir}", log_path)
+        except OSError as e:
+            log_message(f"Error creating output directory {output_dir}: {e}", log_path)
+            raise
     else:
         log_message(f"Reusing existing output directory: {output_dir}", log_path)
