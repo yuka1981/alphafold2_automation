@@ -1,0 +1,9 @@
+{
+    "total_sequence_length": 51,
+    "num_sequences": 2,
+    "wall(hh:mm:ss)": "00:00:17",
+    "msa": 3.2,
+    "inference": 12.5,
+    "io_others": 1.7,
+    "model_times": [2.3, 2.5, 2.4, 2.6, 2.7]
+}

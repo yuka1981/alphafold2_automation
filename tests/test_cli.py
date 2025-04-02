@@ -203,3 +203,43 @@ def test_cli_log_path_unwritable(tmp_path, monkeypatch):
     with pytest.raises(IsADirectoryError):  
         main()
 
+
+def test_cli_summary_output(tmp_path, monkeypatch, capsys):
+    # 準備 input.fasta
+    example_fasta = Path("tests/data/single_seq.fasta")
+    fasta_text = example_fasta.read_text()
+    fasta_file = tmp_path / "input.fasta"
+    fasta_file.write_text(fasta_text)
+
+    # 預先建立模擬結果與環境資訊
+    example_summary = Path("tests/data/example_summary.json")
+    summary_text = example_summary.read_text()
+    summary = tmp_path / "mock_output.json"
+    summary.write_text(summary_text)
+
+    example_env = Path("tests/data/af_info.json")
+    env_text = example_env.read_text()
+    env_info_file = tmp_path / "af_info.json"
+    env_info_file.write_text(env_text)
+
+    # 指向 tmp_path 讓 CLI 找得到模擬檔案
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr("sys.argv", [
+        "alphafold-runner",
+        "--input", str(fasta_file),
+        "--backend", "mock"
+    ])
+
+    main()
+
+    output = capsys.readouterr().out
+    assert (tmp_path / "mock_output.json").exists()
+    assert (tmp_path / "af_info.json").exists()
+    assert "== Inference Summary ==" in output
+    assert "Total sequences: 2" in output
+    assert "Total length: 51" in output
+    assert "Wall time: 00:00:17 (? sec)" in output
+
+    assert "== Environment ==" in output
+    assert "CUDA version: 12.4" in output
+    assert "JAXlib: 0.4.29+cuda12.cudnn91" in output

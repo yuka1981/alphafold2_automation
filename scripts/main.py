@@ -6,6 +6,8 @@ from typing import NoReturn
 from scripts.env_utils import af_info, setup_platform
 from scripts.log_utils import check_required_file
 from scripts.inference import run_inference, run_alphafold_external
+from scripts.summary_utils import print_summary
+import pdb
 
 
 class CustomArgParser(argparse.ArgumentParser):
@@ -111,6 +113,15 @@ def main() -> None:
         )
     else:
         raise ValueError(f"Unknown backend: {args.backend}")
+
+    # Print a summary of the run
+    #print(f"[DEBUG] Current files: {[p.name for p in Path('.').iterdir()]}")
+    summary_path = Path("mock_output.json")
+    env_info_path = Path("af_info.json")
+
+    if summary_path.exists():
+        print()
+        print_summary(summary_path, env_info_path)
 
     # Log the successful setup
     print("Setup complete. Ready to run AlphaFold (not yet implemented).")
