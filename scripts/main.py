@@ -1,6 +1,6 @@
 import argparse
 import sys
-import datetime
+from datetime import datetime
 from pathlib import Path
 from typing import NoReturn
 from scripts.env_utils import af_info, setup_platform
