@@ -1,6 +1,7 @@
 from pathlib import Path
 import time
 import pdb
+import subprocess
 from scripts.log_utils import log_message
 from scripts.log_utils import check_required_file
 
@@ -24,3 +25,35 @@ def run_inference(input_fasta: Path, log_path: Path) -> None:
     seq_length = len(seq)
 
     log_message(f"Mock inference complete (seq_len={seq_length})", log_path)
+
+
+def run_alphafold_external(
+        input_fasta: Path,
+        output_dir: Path,
+        af2_python: Path,
+        af2_script: Path,
+        log_path: Path
+    ) -> None:
+    """
+    Simulate invoking AlphaFold 2 via subprocess using a different Python environment.
+
+    Parameters:
+        input_fasta (Path): Input FASTA file
+        output_dir (Path): Directory to store output
+        af2_python (Path): Path to AlphaFold2's python executable (3.10)
+        af2_script (Path): Path to run_alphafold.py or main.py
+        log_path (Path): Log file path
+    """
+    log_message(f"🧪 Calling AlphaFold2 external process...", log_path)
+
+    try:
+        subprocess.run(
+            [ str(af2_python), str(af2_script),
+                "--fasta", str(input_fasta),
+                "--output_dir", str(output_dir)],
+            check=True
+        )
+        log_message("✅ AlphaFold2 process completed.", log_path)
+    except subprocess.CalledProcessError as e:
+        log_message(f"❌ AlphaFold2 failed with return code {e.returncode}", log_path)
+        raise
