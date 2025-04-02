@@ -38,8 +38,8 @@ def main() -> None:
     parser.add_argument(
         "--log", 
         type=Path, 
-        default= "output" / Path("run.log"), 
-        help="Path to the log file, default: ./run.log"
+        default= Path("output") / Path("run.log"), 
+        help="Path to the log file, default: ./output/run.log"
     )
 
     parser.add_argument(
@@ -83,6 +83,9 @@ def main() -> None:
     setup_platform(args.mode)
 
     # Log the environment information
+    if args.log is None:
+        args.log = Path("output") / Path("run.log")
+    args.log.parent.mkdir(parents=True, exist_ok=True)
     af_info(args.log)
 
     if args.backend == "mock":
