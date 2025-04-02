@@ -55,5 +55,5 @@ def run_alphafold_external(
         )
         log_message("✅ AlphaFold2 process completed.", log_path)
     except subprocess.CalledProcessError as e:
-        log_message(f"❌ AlphaFold2 failed with return code {e.returncode}", log_path)
+        log_message(f"❌ AlphaFold2 failed with return code {e.returncode}\n{e.stderr.decode()}", log_path)
         raise
